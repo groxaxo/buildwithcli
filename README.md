@@ -1,233 +1,185 @@
-# Build with Claude
+# BuildWithCLI
 
-## **Claude Skills, Agents, Commands, Hooks, Plugins, Marketplaces collections for and extend Claude Code**
+**One canonical catalogue of agents, commands, and skills—projected safely into the native formats used by OpenCode, Hermes Agent, OpenAI Codex CLI, GitHub Copilot CLI, Claude Code, and any Agent Skills-compatible CLI.**
 
-[![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![GitHub stars](https://img.shields.io/github/stars/davepoon/buildwithclaude.svg?style=social&label=Star)](https://github.com/davepoon/buildwithclaude)
+BuildWithCLI keeps the repository's curated resources as the source of truth and adds a deterministic compatibility layer around them. It does **not** blindly copy Claude-specific files into every tool. Each target gets either its documented native format or a portable `SKILL.md` projection.
 
+## What it supports
 
-**A plugin marketplace and discovery platform for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Browse curated plugins, discover community contributions, and extend your Claude Code workflows.**
+| Target | Agents | Commands | Skills | Project destination |
+|---|---|---|---|---|
+| OpenCode | Native | Native | Native Agent Skills | `.opencode/agents`, `.opencode/commands`, `.opencode/skills` |
+| Hermes Agent | Converted to skills | Converted to skills | Native skills | `.agents/skills` |
+| OpenAI Codex CLI | Converted to Agent Skills | Converted to Agent Skills | Native Agent Skills | `.agents/skills` |
+| GitHub Copilot CLI | Native custom agents | Native project commands | Native Agent Skills | `.github/agents`, `.claude/commands`, `.github/skills` |
+| Claude Code | Native | Native | Native | `.claude/agents`, `.claude/commands`, `.claude/skills` |
+| Generic CLI | Converted to Agent Skills | Converted to Agent Skills | Agent Skills | `.agents/skills` |
 
-## Quick Start
+The generic target covers CLIs that implement the open Agent Skills convention. Tools with another layout can be added without changing the code by supplying a custom target profile.
 
-```bash
-# Add the Build with Claude marketplace
-/plugin marketplace add davepoon/buildwithclaude
+## Quick start
 
-# Browse available plugins
-/plugin search @buildwithclaude
-
-# Install plugins
-/plugin install <plugin-name>@buildwithclaude
-```
-
-## What's Included
-
-### Build with Claude Plugins
-
-Curated collections maintained in this repository:
-
-| Type | Count | Description |
-|------|-------|-------------|
-| **Agents** | 117 | Specialized AI experts (Python, Go, DevOps, Security, etc.) |
-| **Commands** | 175 | Slash commands for automation (`/commit`, `/docs`, `/tdd`) |
-| **Hooks** | 28 | Event-driven automation (notifications, git, formatting) |
-| **Skills** | 26 | Reusable capabilities from plugins |
-| **Plugins** | 51 | Bundled plugin packages by category |
-
-### Community Discovery
-
-The platform indexes plugins from the broader Claude Code ecosystem:
-
-- **20k+ Community Plugins** from external marketplaces
-- **4,500+ MCP Servers** for database, API, and tool connections
-- **1,100+ Plugin Marketplaces** from the community
-
-
-## Web UI
-
-Browse, search, and explore everything at **[buildwithclaude.com](https://www.buildwithclaude.com)**
-
-![Build with Claude Homepage](buildwithclaude-homepage.png)
-
-![Browse Plugins](buildwithclaude-plugins.png)
-
-![Browse Skills](buildwithclaude-skills.png)
-
-![Browse MCP Servers](buildwithclaude-mcp.png)
-
-![Browse Plugin Marketplaces](buildwithclaude-plugin-marketplaces.png)
-
-### Features
-
-- Browse all plugin types with filtering
-- Search across plugins, agents, commands, hooks, skills
-- Copy install commands with one click
-- View full documentation and usage examples
-- Discover MCP servers and community plugins
-
-## Installation Options
-
-### Option 1: Plugin Marketplace (Recommended)
+Requirements: **Node.js 18.18 or newer**.
 
 ```bash
-# Add marketplace
-/plugin marketplace add davepoon/buildwithclaude
+npm install
 
-# Install specific plugins
-/plugin install agents-python-expert@buildwithclaude
-/plugin install commands-version-control-git@buildwithclaude
-/plugin install hooks-notifications@buildwithclaude
+# Inspect the catalogue and target paths without changing anything
+node bin/buildwithcli.js doctor --target all --skip-binary-check
 
-# Or install everything
-/plugin install all-agents@buildwithclaude
-/plugin install all-commands@buildwithclaude
-/plugin install all-hooks@buildwithclaude
+# Install into every supported CLI detected on PATH
+node bin/buildwithcli.js install --target auto
+
+# Install selected resources into explicit targets
+node bin/buildwithcli.js install \
+  agent:python-* command:commit skill:mcp-builder \
+  --target opencode,hermes,codex,copilot
+
+# Preview the exact writes
+node bin/buildwithcli.js plan '*' --target all
+
+# Install personal resources rather than project resources
+node bin/buildwithcli.js install skill:mcp-builder --target all --scope user
 ```
 
-### Option 2: Manual Installation
+The `buildwithcli` executable is also exposed through `package.json`:
 
 ```bash
-# Clone repository
-git clone https://github.com/davepoon/buildwithclaude.git
-cd buildwithclaude
-
-# Install agents
-find plugins/agents-*/agents -name "*.md" -exec cp {} ~/.claude/agents/ \;
-
-# Install commands
-find plugins/commands-*/commands -name "*.md" -exec cp {} ~/.claude/commands/ \;
-
-# Restart Claude Code
+npm exec -- buildwithcli targets
 ```
 
-## Available Plugin Categories
+## Commands
 
-### Agents (11 categories)
-
-- **Development & Architecture** - Backend, frontend, mobile, GraphQL experts
-- **Language Specialists** - Python, Go, Rust, TypeScript, C/C++ experts
-- **Quality & Security** - Code review, security audit, debugging
-- **Infrastructure & Operations** - DevOps, cloud, database optimization
-- **Data & AI** - ML engineering, data pipelines, AI development
-- **Crypto & Blockchain** - Trading systems, DeFi, Web3 development
-
-[Browse all agents →](https://www.buildwithclaude.com/subagents)
-
-![Browse Subagents](buildwithclaude-subagents.png)
-
-### Commands (22 categories)
-
-- **Version Control** - Commit, PR creation, branch management
-- **Code Analysis** - Testing, review, optimization
-- **Documentation** - Docs generation, changelogs, API specs
-- **Project Management** - Todos, PRDs, task tracking
-
-[Browse all commands →](https://www.buildwithclaude.com/commands)
-
-![Browse Commands](buildwithclaude-commands.png)
-
-### Hooks (8 categories)
-
-- **Notifications** - Slack, Discord, Telegram alerts
-- **Git** - Auto-staging, smart commits
-- **Development** - Lint on save, auto-format
-- **Security** - File protection, vulnerability scanning
-
-[Browse all hooks →](https://www.buildwithclaude.com/hooks)
-
-![Browse Hooks](buildwithclaude-hooks.png)
-
-## Usage Examples
-
-### Using Agents
-
-Agents are automatically invoked based on context, or explicitly called:
-
-```
-"Use the python-pro to optimize this function"
-"@agent-security-auditor review this authentication code"
-"Have the devops-troubleshooter help debug this deployment"
+```text
+buildwithcli targets [--json]
+buildwithcli list [selectors...] [--kind agent,command,skill] [--json]
+buildwithcli doctor [--target auto|all|TARGET] [--scope project|user]
+buildwithcli install [selectors...] [--target auto|all|TARGET]
+buildwithcli plan [selectors...] [install options]
+buildwithcli export [selectors...] --output DIR [--target all]
+buildwithcli uninstall [selectors...] [--target TARGET]
 ```
 
-### Using Commands
+Selectors are deterministic and composable:
 
-Commands use the `/` prefix:
-
-```
-/commit                    # Create conventional commit
-/create-pr                 # Create pull request
-/docs                      # Generate documentation
-/tdd                       # Start test-driven development
-/code_analysis             # Analyze code quality
+```bash
+buildwithcli list '*'
+buildwithcli install python-expert --target auto
+buildwithcli install 'agent:python-*' 'command:commit' --target all
+buildwithcli install '*' --exclude 'command:*' --kind agent,skill --target codex
 ```
 
-### Using Hooks
+`--target` can be repeated or comma-separated:
 
-Hooks run automatically on events like tool calls or session start.
+- `auto`: detect installed target binaries; fall back to generic Agent Skills.
+- `all`: all built-in targets.
+- `opencode`, `hermes`, `codex`, `copilot`, `claude`, `agents`: explicit targets.
 
-## Contributing
+## Hermes project setup
 
-We welcome contributions!
+Hermes loads personal skills directly from `~/.hermes/skills`. For project-scoped installs, BuildWithCLI deliberately uses the shared `.agents/skills` directory so Codex, Hermes, and generic clients can own one physical copy.
 
-### Adding Plugins
+Add the project directory to `~/.hermes/config.yaml`:
 
-1. Create a new directory in `plugins/` following the naming convention
-2. Add your plugin files (agents, commands, hooks)
-3. Run `npm test` to validate
-4. Submit a pull request
-
-### Plugin Format
-
-**Agent** (`plugins/agents-*/agents/*.md`):
-```markdown
----
-name: agent-name
-description: When to invoke this agent
-category: category-name
-tools: Read, Write, Bash
----
-
-You are a [role description]...
+```yaml
+skills:
+  external_dirs:
+    - /absolute/path/to/project/.agents/skills
 ```
 
-**Command** (`plugins/commands-*/commands/*.md`):
-```markdown
----
-description: What this command does
-category: category-name
-argument-hint: <args>
----
+Then verify it:
 
-Command implementation...
+```bash
+node bin/buildwithcli.js doctor --target hermes --project /absolute/path/to/project
 ```
 
-**Hook** (`plugins/hooks-*/hooks/*.md`):
-```markdown
----
-hooks: PreToolUse, PostToolUse
-description: What this hook does
----
+## Safe, idempotent installation
 
-Hook implementation...
+BuildWithCLI records managed files in:
+
+- project scope: `<project>/.buildwithcli/manifest.json`
+- user scope: `~/.buildwithcli/manifest.json`
+
+The installer:
+
+- stages writes before replacing destinations;
+- rolls back if a transaction fails;
+- refuses to overwrite untracked or locally modified files unless `--force` is explicit;
+- refuses to uninstall modified files unless `--force` is explicit;
+- rejects source symlinks and destination symlink escapes;
+- tracks shared ownership when several targets use the same `.agents/skills` file;
+- removes a shared file only after its final owning target is uninstalled;
+- detects duplicate catalogue entries and can fail on conflicts with `--strict`.
+
+## Why hooks and MCP configuration are not copied automatically
+
+Hook event names, permission models, executable environments, and MCP configuration schemas differ materially between CLIs. Treating them as interchangeable can execute unintended commands or grant unintended access.
+
+BuildWithCLI therefore discovers and reports hooks and MCP files, but **does not auto-project them**. Configure those surfaces explicitly for each runtime after review. See [`docs/security.md`](docs/security.md).
+
+## Portable conversion rules
+
+When a target has no native agent or command format:
+
+- an agent becomes a named Agent Skill containing its authoritative operating instructions;
+- a command becomes an Agent Skill, with `$ARGUMENTS`, `${ARGUMENTS}`, `$1`, `$2`, and similar placeholders rewritten into vendor-neutral invocation language;
+- collisions across kinds receive deterministic names such as `agent-review` and `command-review`;
+- names longer than the Agent Skills limit receive a deterministic hash suffix;
+- skill support files are copied with the skill and checked against path traversal.
+
+Native tool allow-lists are preserved where the target supports them. Unknown vendor-specific tools generate warnings rather than silently widening access.
+
+## Export a distributable multi-CLI bundle
+
+`export` writes an isolated project tree and defaults to every built-in target:
+
+```bash
+node bin/buildwithcli.js export '*' --output ./dist/buildwithcli-bundle
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+No output may escape the requested export directory.
 
-## Links
+## Add any other CLI
 
-- **Web UI**: [buildwithclaude.com](https://www.buildwithclaude.com)
-- **Documentation**: [Claude Code Docs](https://docs.anthropic.com/en/docs/claude-code)
-- **Plugin Marketplaces**: [Plugin Docs](https://code.claude.com/docs/en/plugin-marketplaces)
-- **Issues**: [GitHub Issues](https://github.com/davepoon/buildwithclaude/issues)
-- **Visual Index**: [Vexilo · A field guide to Claude Code](https://vexilo.app/?lang=en) — Interactive index of 31 agents · 99 commands · 123 skills · 13 rules, organized around the 5-step workflow. ([companion repo](https://github.com/lilhawk7077/claude-code-resources))
+Create a JSON target profile and pass it with `--profile`:
+
+```bash
+node bin/buildwithcli.js install '*' \
+  --profile ./examples/targets/portable-agent-skills.json \
+  --target mycli
+```
+
+Profiles can target native formats already implemented by BuildWithCLI or the portable Agent Skills renderer. See [`docs/custom-targets.md`](docs/custom-targets.md).
+
+## Development and verification
+
+```bash
+# Fast compatibility/security suite
+npm run test:cli
+
+# Existing catalogue validation plus unit tests
+npm test
+
+# Syntax and target inspection
+node --check lib/buildwithcli.js
+node bin/buildwithcli.js targets
+```
+
+The CLI compatibility suite covers native rendering, portable conversion, collisions, environment-specific user roots, auto-detection, dry-run/export behavior, atomic updates, local-edit protection, shared ownership, custom profiles, and symlink/path traversal defenses.
+
+## Existing Claude marketplace and web UI
+
+The original Claude Code marketplace under `.claude-plugin/` remains intact. Existing Claude users can continue using the marketplace flow while BuildWithCLI provides a separate cross-CLI installation path.
+
+The legacy discovery UI and curated catalogue are retained from [Dave Poon's Build with Claude project](https://github.com/davepoon/buildwithclaude). This fork adds the provider-neutral CLI projection and lifecycle layer.
+
+## Documentation
+
+- [`docs/compatibility.md`](docs/compatibility.md) — exact target mappings and limitations
+- [`docs/custom-targets.md`](docs/custom-targets.md) — custom target profile reference
+- [`docs/security.md`](docs/security.md) — trust model and failure behavior
+- [`AGENTS.md`](AGENTS.md) — repository engineering rules for coding agents
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
-
----
-
-Made with ❤️ by Dave Poon
+MIT. See [`LICENSE`](LICENSE).

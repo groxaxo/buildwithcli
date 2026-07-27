@@ -2,11 +2,20 @@
   "name": "buildwithclaude",
   "version": "1.0.0",
   "private": true,
-  "description": "A comprehensive collection of specialized AI subagents for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), designed to enhance development workflows with domain-specific expertise.",
-  "main": "index.js",
+  "description": "A provider-neutral catalogue and deterministic installer for OpenCode, Hermes Agent, Codex CLI, Copilot CLI, Claude Code, and Agent Skills-compatible CLIs.",
+  "main": "lib/buildwithcli.js",
+  "bin": {
+    "buildwithcli": "bin/buildwithcli.js"
+  },
+  "engines": {
+    "node": ">=18.18"
+  },
   "scripts": {
     "test": "npm run validate && npm run test:unit",
-    "test:unit": "node --test scripts/github-search-pagination.test.js && node --experimental-strip-types --test web-ui/lib/indexer/search-pagination.test.ts",
+    "test:unit": "node --test tests/*.test.js scripts/github-search-pagination.test.js && node --experimental-strip-types --test web-ui/lib/indexer/search-pagination.test.ts",
+    "test:cli": "node --test tests/*.test.js",
+    "cli": "node bin/buildwithcli.js",
+    "cli:doctor": "node bin/buildwithcli.js doctor --target all --skip-binary-check",
     "test:integration": "./tests/plugin-test-harness.sh",
     "validate": "node scripts/validate-all.js",
     "validate:subagents": "node scripts/validate-subagents.js",
@@ -21,15 +30,23 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/davepoon/buildwithclaude.git"
+    "url": "git+https://github.com/groxaxo/buildwithcli.git"
   },
-  "keywords": [],
+  "keywords": [
+    "agent-skills",
+    "opencode",
+    "hermes-agent",
+    "codex-cli",
+    "copilot-cli",
+    "claude-code",
+    "coding-agents"
+  ],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/davepoon/buildwithclaude/issues"
+    "url": "https://github.com/groxaxo/buildwithcli/issues"
   },
-  "homepage": "https://github.com/davepoon/buildwithclaude#readme",
+  "homepage": "https://github.com/groxaxo/buildwithcli#readme",
   "dependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",

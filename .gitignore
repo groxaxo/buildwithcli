@@ -5,6 +5,7 @@ mise.toml
 yarn.lock
 .DS_Store
 .claude
+.buildwithcli/
 
 # Environment files
 .env
@@ -12,7 +13,6 @@ yarn.lock
 .env.*.local
 scripts/mcp-importers/.env
 .mcp.json
-docs
 
 # Build-time copy of story cover images (source lives in stories/<slug>/cover.*)
 web-ui/public/stories
