@@ -55,6 +55,22 @@ Another body.
   });
 });
 
+test('command names inferred from underscored filenames are normalized to kebab-case', async (t) => {
+  const { catalog } = await createCatalog(t);
+  await write(catalog, 'plugins/all-commands/commands/code_analysis.md', `---
+description: Comprehensive code analysis with quality metrics.
+category: code-analysis-testing
+allowed-tools: Read, Grep, Glob
+---
+# Code Analysis
+Inspect $ARGUMENTS and report findings.
+`);
+  const result = await discoverCatalog(catalog);
+  const command = result.resources.find((resource) => resource.kind === 'command' && resource.name.startsWith('code'));
+  assert.equal(command.name, 'code-analysis');
+  assert.equal(command.sourcePath, 'plugins/all-commands/commands/code_analysis.md');
+});
+
 test('catalog doctor inventory counts root MCP assets as unsupported automatic projections', async (t) => {
   const { catalog } = await createCatalog(t);
   await write(catalog, 'mcp-servers/registry.json', '{}\n');
