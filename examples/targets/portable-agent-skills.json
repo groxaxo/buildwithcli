@@ -1,0 +1,28 @@
+{
+  "id": "mycli",
+  "displayName": "Example Agent Skills CLI",
+  "binaries": ["mycli"],
+  "project": {
+    "roots": {
+      "skill": ".mycli/skills"
+    },
+    "formats": {
+      "agent": "portable-skill",
+      "command": "portable-skill",
+      "skill": "portable-skill"
+    }
+  },
+  "user": {
+    "roots": {
+      "skill": "${MYCLI_HOME:-~/.mycli}/skills"
+    },
+    "formats": {
+      "agent": "portable-skill",
+      "command": "portable-skill",
+      "skill": "portable-skill"
+    }
+  },
+  "notes": [
+    "Replace paths and binary name with the target CLI's documented Agent Skills locations."
+  ]
+}

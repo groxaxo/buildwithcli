@@ -1,12 +1,21 @@
 {
-  "name": "buildwithcli",
+  "name": "buildwithclaude",
   "version": "1.0.0",
   "private": true,
-  "description": "A provider-neutral catalog and deterministic compiler for OpenCode, Hermes Agent, Codex CLI, GitHub Copilot CLI, Claude Code, and other agent CLIs.",
-  "main": "index.js",
+  "description": "A provider-neutral catalogue and deterministic installer for OpenCode, Hermes Agent, Codex CLI, Copilot CLI, Claude Code, and Agent Skills-compatible CLIs.",
+  "main": "lib/buildwithcli.js",
+  "bin": {
+    "buildwithcli": "bin/buildwithcli.js"
+  },
+  "engines": {
+    "node": ">=18.18"
+  },
   "scripts": {
-    "test": "npm run validate && npm run test:unit && npm run test:portable",
-    "test:unit": "node --test scripts/github-search-pagination.test.js && node --experimental-strip-types --test web-ui/lib/indexer/search-pagination.test.ts",
+    "test": "npm run validate && npm run test:unit",
+    "test:unit": "node --test tests/*.test.js scripts/github-search-pagination.test.js && node --experimental-strip-types --test web-ui/lib/indexer/search-pagination.test.ts",
+    "test:cli": "node --test tests/*.test.js",
+    "cli": "node bin/buildwithcli.js",
+    "cli:doctor": "node bin/buildwithcli.js doctor --target all --skip-binary-check",
     "test:integration": "./tests/plugin-test-harness.sh",
     "validate": "node scripts/validate-all.js",
     "validate:subagents": "node scripts/validate-subagents.js",
@@ -14,13 +23,7 @@
     "generate:registry": "node scripts/generate-registry.js",
     "fetch:plugins": "node scripts/fetch-plugins.js",
     "fetch:all": "npm run fetch:plugins && npm run generate:registry",
-    "start": "node web-ui/server.js",
-    "portable": "node bin/buildwithcli.js",
-    "portable:doctor": "node bin/buildwithcli.js doctor",
-    "portable:scan": "node bin/buildwithcli.js scan --profile curated",
-    "portable:compile": "node bin/buildwithcli.js compile --target all --profile curated --out .buildwithcli/dist",
-    "validate:portable": "node scripts/validate-portability.js",
-    "test:portable": "node scripts/run-portability-tests.js"
+    "start": "node web-ui/server.js"
   },
   "workspaces": [
     "web-ui"
@@ -36,7 +39,7 @@
     "codex-cli",
     "copilot-cli",
     "claude-code",
-    "mcp"
+    "coding-agents"
   ],
   "author": "",
   "license": "MIT",
@@ -51,11 +54,5 @@
     "glob": "^11.0.3",
     "gray-matter": "^4.0.3"
   },
-  "devDependencies": {},
-  "bin": {
-    "buildwithcli": "bin/buildwithcli.js"
-  },
-  "engines": {
-    "node": ">=20"
-  }
+  "devDependencies": {}
 }

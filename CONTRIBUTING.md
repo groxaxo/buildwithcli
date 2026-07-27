@@ -1,414 +1,246 @@
-# Contributing to Build with Claude
+# Contributing to BuildWithCLI
 
-Thank you for your interest in contributing to Build with Claude! This guide will help you create high-quality plugins, agents, commands, hooks, and skills that integrate seamlessly with Claude Code.
+BuildWithCLI maintains a curated canonical catalogue and a provider-neutral projection layer for OpenCode, Hermes Agent, OpenAI Codex CLI, GitHub Copilot CLI, Claude Code, and Agent Skills-compatible tools.
 
-## Table of Contents
+Contributions fall into two categories:
 
-- [Before You Start](#before-you-start)
-- [Project Structure](#project-structure)
-- [Contributing Agents](#contributing-agents)
-- [Contributing Commands](#contributing-commands)
-- [Contributing Hooks](#contributing-hooks)
-- [Contributing Skills](#contributing-skills)
-- [Contributing Plugins](#contributing-plugins)
-- [File Naming Conventions](#file-naming-conventions)
-- [Validation & Testing](#validation--testing)
-- [Submitting a Pull Request](#submitting-a-pull-request)
-- [Code of Conduct](#code-of-conduct)
+1. **Catalogue resources** — agents, commands, skills, hooks, and Claude marketplace packages under `plugins/`.
+2. **Compatibility/runtime code** — the installer, renderers, lifecycle logic, tests, and documentation under `bin/`, `lib/`, `tests/`, and `docs/`.
 
-## Before You Start
+## Before you start
 
-1. **Read the documentation**:
-   - [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
-   - [Subagents](https://docs.anthropic.com/en/docs/claude-code/sub-agents)
-   - [Slash Commands](https://docs.anthropic.com/en/docs/claude-code/slash-commands)
-   - [Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks)
-   - [Plugin Marketplaces](https://code.claude.com/docs/en/plugin-marketplaces)
+- Search existing resources for overlapping names and responsibilities.
+- Keep each resource focused on one repeatable capability.
+- For target-format changes, verify behavior against current primary vendor documentation.
+- Never claim a resource is portable merely because another CLI accepts Markdown.
+- Do not add automatic hook or MCP projection without an explicit, fail-closed threat model and tests.
 
-2. **Check existing contributions**: Ensure your idea doesn't overlap significantly with existing components
+## Repository structure
 
-3. **One purpose per contribution**: Each component should have a single, clear responsibility
-
-## Project Structure
-
-```
+```text
 plugins/
-├── agents-<category>/
-│   ├── .claude-plugin/plugin.json
-│   └── agents/*.md                    # Agent markdown files
-├── commands-<category>/
-│   ├── .claude-plugin/plugin.json
-│   └── commands/*.md                  # Command markdown files
-├── hooks-<category>/
-│   ├── .claude-plugin/plugin.json
-│   └── hooks/*.md                     # Hook markdown files
-├── all-skills/
-│   └── skills/<skill-name>/SKILL.md   # Skill directories
-├── all-agents/                        # Bundle: all agents
-├── all-commands/                      # Bundle: all commands
-└── all-hooks/                         # Bundle: all hooks
+├── agents-<category>/agents/*.md
+├── commands-<category>/commands/*.md
+├── hooks-<category>/hooks/*.md
+├── all-skills/skills/<skill-name>/SKILL.md
+├── all-agents/                 # optional aggregate bundle
+├── all-commands/               # optional aggregate bundle
+└── all-hooks/                  # optional aggregate bundle
+
+bin/buildwithcli.js             # executable entrypoint
+lib/buildwithcli.js             # compatibility and lifecycle core
+tests/*.test.js                  # filesystem-level compatibility/security tests
+docs/                           # compatibility, profiles, and security model
+examples/targets/               # custom target profile examples
 ```
 
-## Contributing Agents
+## Canonical resource formats
 
-Agents are specialized AI experts that Claude Code invokes automatically or on request.
+The catalogue retains its established source formats. BuildWithCLI renders them into each target format at install/export time.
 
-### Agent Location
+### Agent
 
-Place agents in: `plugins/agents-<category>/agents/<agent-name>.md`
+Location:
 
-### Agent Structure
+```text
+plugins/agents-<category>/agents/<agent-name>.md
+```
 
 ```markdown
 ---
 name: agent-name
-description: Clear description of when this agent should be invoked
+description: Clear trigger conditions and responsibility
 category: category-name
-tools: Read, Write, Bash  # Optional - omit for all tools
+tools: Read, Write, Bash
 ---
 
-You are a [role/expertise description].
-
-When invoked:
-1. [First action - analyze/understand requirements]
-2. [Second action - identify patterns/structure]
-3. [Third action - plan approach]
-4. [Fourth action - begin implementation]
-
-Process:
-- [Key principle or methodology]
-- [Best practice to follow]
-- [Important consideration]
-
-Provide:
-- [Specific deliverable with format]
-- [Tests or validation]
-- [Documentation or examples]
+You are a specialist responsible for ...
 ```
 
-### Agent Categories
+Requirements:
 
-| Category | Description |
-|----------|-------------|
-| `development-architecture` | Backend, frontend, mobile, API design |
-| `language-specialists` | Language-specific expertise (Python, Go, Rust, etc.) |
-| `infrastructure-operations` | DevOps, cloud, deployment, databases |
-| `quality-security` | Code review, security, testing, performance |
-| `data-ai` | Data science, ML/AI engineering, analytics |
-| `specialized-domains` | Domain-specific tools (payments, legacy, etc.) |
-| `crypto-trading` | Cryptocurrency trading and DeFi |
-| `blockchain-web3` | Smart contracts, Web3 development |
-| `business-finance` | Business analysis, financial modeling |
-| `design-experience` | UI/UX, accessibility, design systems |
-| `sales-marketing` | Sales automation, marketing tools |
+- `name` matches the filename, uses lowercase letters/numbers/hyphens, and is at most 64 characters;
+- `description` makes invocation conditions explicit;
+- `tools`, when present, is an allow-list rather than a list of examples;
+- instructions state required validation and expected deliverables;
+- do not assume vendor-specific tools unless the resource genuinely requires them.
 
-### Agent Field Requirements
+### Command
 
-- **name**: Must match filename (without .md), lowercase with hyphens
-- **description**: Clear trigger conditions, under 500 characters
-- **category**: Must be one of the valid categories above
-- **tools**: Optional - comma-separated list to restrict tools
-- **Opening statement**: Must start with "You are a..."
+Location:
 
-## Contributing Commands
-
-Commands are slash commands that users invoke directly.
-
-### Command Location
-
-Place commands in: `plugins/commands-<category>/commands/<command-name>.md`
-
-### Command Structure
+```text
+plugins/commands-<category>/commands/<command-name>.md
+```
 
 ```markdown
 ---
-description: Brief explanation of what the command does (10-200 chars)
+description: What the command does
 category: category-name
-argument-hint: <optional-args>  # Optional
-allowed-tools: tool1, tool2    # Optional
-model: opus|sonnet|haiku       # Optional
+argument-hint: "[optional arguments]"
+allowed-tools: Read, Bash
 ---
 
-# Command implementation
+# Command procedure
 
-Detailed instructions for how the command should work...
+Use $ARGUMENTS as the invocation input ...
 ```
 
-### Command Categories
+BuildWithCLI rewrites `$ARGUMENTS`, `${ARGUMENTS}`, `$1`, `$2`, and similar placeholders when a command is projected to a portable skill.
 
-| Category | Description |
-|----------|-------------|
-| `version-control-git` | Git operations, commits, PRs |
-| `code-analysis-testing` | Code quality, testing |
-| `ci-deployment` | CI/CD, containerization |
-| `documentation-changelogs` | Docs, changelogs |
-| `context-loading-priming` | Context and priming |
-| `project-task-management` | Project management |
-| `api-development` | API development |
-| `automation-workflow` | Automation tools |
-| `database-operations` | Database tasks |
-| `miscellaneous` | Other commands |
+### Skill
 
-## Contributing Hooks
+Location:
 
-Hooks are event-driven automations that run on specific events.
-
-### Hook Location
-
-Place hooks in: `plugins/hooks-<category>/hooks/<hook-name>.md`
-
-### Hook Structure
-
-```markdown
----
-name: hook-name
-description: What this hook does
-category: category-name
-event: Stop|PreToolUse|PostToolUse
-matcher: "*"  # or specific tool name
-language: bash
-version: 1.0.0
----
-
-# hook-name
-
-Description of the hook's purpose.
-
-## Event Configuration
-
-- **Event Type**: `Stop`
-- **Tool Matcher**: `*`
-- **Category**: category-name
-
-## Environment Variables
-
-- `VARIABLE_NAME` - Description
-
-## Requirements
-
-List any requirements...
-
-### Script
-
-```bash
-#!/bin/bash
-# Your executable script here
-# Hook receives JSON via stdin with tool_input, tool_name, tool_result fields
-# Use jq to parse: jq -r '.tool_input.file_path'
-
-# Example: echo the tool name
-tool_name=$(jq -r '.tool_name // empty')
-echo "Hook triggered by: $tool_name"
+```text
+plugins/all-skills/skills/<skill-name>/SKILL.md
 ```
-```
-
-### Hook Events
-
-| Event | Description |
-|-------|-------------|
-| `PreToolUse` | Before a tool is called |
-| `PostToolUse` | After a tool completes |
-| `Stop` | When Claude Code finishes |
-| `SessionStart` | When a session begins |
-| `SessionEnd` | When a session ends |
-
-### Hook Categories
-
-| Category | Description |
-|----------|-------------|
-| `notifications` | Slack, Discord, Telegram alerts |
-| `git` | Auto-staging, smart commits |
-| `development` | Lint on save, auto-format |
-| `formatting` | Code formatting |
-| `security` | File protection, scanning |
-| `automation` | General automation |
-| `performance` | Performance monitoring |
-| `testing` | Test automation |
-
-## Contributing Skills
-
-Skills are reusable capabilities from plugins.
-
-### Skill Location
-
-Create a directory: `plugins/all-skills/skills/<skill-name>/SKILL.md`
-
-### Skill Structure
 
 ```markdown
 ---
 name: skill-name
+description: What this skill does and when an agent should load it
 category: category-name
-description: What this skill does and when to use it
 ---
 
 # Skill Name
 
-Description of the skill.
-
-## When to Use This Skill
-
-- Use case 1
-- Use case 2
-
-## What This Skill Does
-
-1. Step 1
-2. Step 2
-
-## How to Use
-
-### Basic Usage
-
-```
-Example prompt...
+Operating instructions ...
 ```
 
-## Example
+Supporting files may live beside `SKILL.md`. Do not use symlinks. Keep references relative to the skill directory and include only files the skill actually needs.
 
-**User**: "Example request"
+### Hooks and MCP entries
 
-**Output**:
-```
-Example output...
-```
+Hooks and MCP server catalogues remain useful canonical resources, but BuildWithCLI does not automatically install them into non-Claude clients. Their execution and trust models differ between products.
 
-## Tips
+A hook contribution must document:
 
-- Tip 1
-- Tip 2
-```
+- event and payload schema;
+- shell/interpreter requirements;
+- environment variables;
+- working-directory assumptions;
+- destructive behavior and permissions;
+- timeout/concurrency behavior.
 
-## Contributing Plugins
+An MCP contribution must document transport, executable or URL provenance, required credentials, filesystem/network reach, and destructive tools.
 
-Plugins are bundled packages containing agents, commands, hooks, or skills.
+## Adding or changing a built-in target
 
-### Plugin Structure
+A target definition contains project/user roots, renderer names, binary detection, and operational notes. Keep these invariants:
 
-```
-plugins/<plugin-name>/
-├── .claude-plugin/
-│   └── plugin.json
-├── agents/           # Optional
-│   └── *.md
-├── commands/         # Optional
-│   └── *.md
-└── hooks/            # Optional
-    └── *.md
-```
+- native output only where the target documents that surface;
+- portable `SKILL.md` fallback when no native agent/command surface exists;
+- one deterministic byte sequence for any path shared by multiple targets;
+- no silent permission widening;
+- no project path may be absolute or escape with `..`;
+- user paths must support the documented home/environment behavior;
+- shared `.agents/skills` output must retain all owner target IDs;
+- uninstall must detach one owner without removing files still owned by another.
 
-### Plugin Manifest (plugin.json)
+Add tests for project scope, user scope, rendering, collisions, and lifecycle behavior.
 
-```json
-{
-  "name": "plugin-name",
-  "version": "1.0.0",
-  "description": "Description of the plugin",
-  "author": {
-    "name": "Your Name",
-    "url": "https://github.com/username"
-  },
-  "repository": "https://github.com/username/repo",
-  "license": "MIT",
-  "keywords": ["keyword1", "keyword2"]
-}
-```
+## Adding a renderer
 
-## File Naming Conventions
+A new renderer must:
 
-- **Format**: `descriptive-name.md`
-- **Rules**:
-  - Use lowercase letters only
-  - Separate words with hyphens (-)
-  - Be descriptive but concise
-  - Name must match the `name` field in frontmatter
+1. consume the canonical resource model rather than reparsing source ad hoc;
+2. emit deterministic UTF-8 with stable YAML ordering;
+3. validate target limits before writing;
+4. explicitly map or reject tool identifiers;
+5. preserve support files for skills;
+6. avoid fields unsupported by the target;
+7. produce the same bytes whenever multiple targets share a destination.
 
-**Good examples**: `code-reviewer.md`, `python-pro.md`, `discord-notifications.md`
+Prefer extending a custom target profile over adding a built-in renderer when the target follows an existing format.
 
-**Bad examples**: `CodeReviewer.md`, `code_reviewer.md`, `cr.md`
+## Security requirements
 
-## Validation & Testing
+Changes to install, update, export, manifest, or uninstall behavior must preserve:
 
-### Running Validation
+- atomic staging and rollback;
+- optimistic CAS checks on destinations and manifests;
+- refusal to adopt untracked files without `--force`;
+- content **and mode** protection for local changes;
+- source symlink rejection;
+- canonical destination/root/boundary validation;
+- target-profile validation for user manifest roots;
+- duplicate-destination rejection;
+- shared ownership semantics;
+- fail-closed behavior for malformed manifests and profiles.
+
+Every bug fix in this area needs a regression test using real temporary filesystem operations.
+
+## Local validation
+
+Node.js 18.18 or newer is required.
 
 ```bash
-# Install dependencies (from root)
 npm install
 
-# Run all validations
-npm test
+# Compatibility/security adapter suite
+npm run test:cli
 
-# Or run specific validations
-npm run validate              # Master validation
-npm run validate:subagents    # Validate agents/commands
-npm run validate:hooks        # Validate hooks
+# Syntax and command surface
+node --check lib/buildwithcli.js
+node --check bin/buildwithcli.js
+node bin/buildwithcli.js targets
+node bin/buildwithcli.js --help
+
+# Existing catalogue validation and all unit tests
+npm test
 ```
 
-### Testing Your Contribution
+Do not rely on GitHub Actions as the only validation path. Pull requests must include the exact local commands and results.
 
-1. **Installation Test**:
-   ```bash
-   # Install agents
-   find plugins/agents-*/agents -name "*.md" -exec cp {} ~/.claude/agents/ \;
+## Test expectations
 
-   # Install commands
-   find plugins/commands-*/commands -name "*.md" -exec cp {} ~/.claude/commands/ \;
+At minimum, target/lifecycle changes should cover the relevant cases:
 
-   # Restart Claude Code
-   ```
+- native path and frontmatter output;
+- portable agent/command conversion;
+- command argument rewriting;
+- tool alias mapping and unknown-tool warnings;
+- name collisions and 64-character limits;
+- support-file copying;
+- auto target detection;
+- custom target profiles;
+- idempotent create/no-op/update;
+- local content and mode modifications;
+- untracked identical destinations;
+- shared-owner detach/final remove;
+- malformed/tampered manifests;
+- source and destination symlink escapes;
+- user roots controlled by `XDG_CONFIG_HOME`, `HERMES_HOME`, and `COPILOT_HOME`;
+- export containment.
 
-2. **Functionality Tests**:
-   - Test with various prompts
-   - Verify output matches expectations
-   - Check tool restrictions work
+## Pull request format
 
-## Submitting a Pull Request
+Use a focused branch and conventional commit. A useful PR description includes:
 
-### PR Requirements
+```markdown
+## Summary
+- What changed
+- Why this compatibility model is correct
 
-1. **Branch Naming**: `add-<component-name>` or `update-<component-name>`
+## Target behavior
+- Native surfaces used
+- Portable fallbacks used
+- Unsupported/manual surfaces
 
-2. **PR Title**:
-   - New: "Add [name] [type]" (e.g., "Add python-pro agent")
-   - Updates: "Update [name]: [description]"
+## Security and lifecycle
+- Permission behavior
+- Path/manifest behavior
+- Shared ownership impact
 
-3. **PR Description**:
-   ```markdown
-   ## Summary
-   Brief description of the contribution
+## Verification
+- `npm run test:cli` — N/N passed
+- `npm test` — result
+- Manual command/output checks
+```
 
-   ## Component Details
-   - **Name**: component-name
-   - **Type**: Agent/Command/Hook/Skill
-   - **Category**: category-name
+Keep generated output, local manifests, credentials, and runtime configuration out of commits.
 
-   ## Testing
-   - [ ] Ran validation (`npm test`)
-   - [ ] Tested functionality
-   - [ ] No overlap with existing components
+## Code of conduct
 
-   ## Examples
-   Provide 2-3 example usages
-   ```
-
-### Review Process
-
-1. **Automated Checks**: Validation runs automatically
-2. **Manual Review**: Uniqueness, quality, documentation
-3. **Merge**: Once approved, auto-deploys to [buildwithclaude.com](https://www.buildwithclaude.com)
-
-## Code of Conduct
-
-- Be respectful and constructive
-- Focus on improving Claude Code's capabilities
-- No components for malicious purposes
-- Respect intellectual property
-- Help others improve their contributions
-
-## Questions?
-
-- Check existing [issues](https://github.com/davepoon/buildwithclaude/issues)
-- Join the discussion in [pull requests](https://github.com/davepoon/buildwithclaude/pulls)
-- Browse the [Web UI](https://www.buildwithclaude.com) for examples
-
-Thank you for contributing to Build with Claude!
+Be precise, constructive, and respectful. Do not contribute malicious automation, credential theft, covert persistence, destructive defaults, or resources designed to bypass a user's approval and sandbox policies.
