@@ -1,0 +1,10 @@
+{
+  "id": "gemini",
+  "displayName": "Gemini CLI",
+  "skillDir": ".gemini/skills",
+  "agentMode": "skill",
+  "commandMode": "skill",
+  "instructionsPath": "GEMINI.md",
+  "mcpPath": ".gemini/mcp.json",
+  "mcpRootKey": "mcpServers"
+}

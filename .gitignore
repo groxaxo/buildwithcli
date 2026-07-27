@@ -48,3 +48,10 @@ scripts/process-command-file.js
 scripts/process-new-commands.sh
 scripts/mcp-importers/
 web-ui/scripts/create-meili-key.js
+
+<!-- buildwithcli-portability:start -->
+.buildwithcli/
+.buildwithcli-backup/
+__pycache__/
+*.pyc
+<!-- buildwithcli-portability:end -->

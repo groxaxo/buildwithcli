@@ -11,14 +11,15 @@ const path = require('path');
 const validators = [
   { name: 'Subagents & Commands', script: 'validate-subagents.js' },
   { name: 'Hooks', script: 'validate-hooks.js' },
-  { name: 'Skills', script: 'validate-skills.js' }
+  { name: 'Skills', script: 'validate-skills.js' },
+  { name: 'Portability', script: 'validate-portability.js' },
 ];
 
 const results = [];
 let hasErrors = false;
 
 console.log('\n\x1b[1m\x1b[34m========================================\x1b[0m');
-console.log('\x1b[1m\x1b[34m  BuildWithClaude Validation Suite\x1b[0m');
+console.log('\x1b[1m\x1b[34m  BuildWithCLI Validation Suite\x1b[0m');
 console.log('\x1b[1m\x1b[34m========================================\x1b[0m\n');
 
 async function runValidator(validator) {

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Claude Code Skill Schema",
-  "description": "Schema for validating Claude Code SKILL.md frontmatter",
+  "title": "BuildWithCLI Agent Skill Schema",
+  "description": "Schema for portable Agent Skills used across supported CLI hosts",
   "type": "object",
   "properties": {
     "name": {
@@ -48,8 +48,19 @@
       "description": "Category for organizing the skill"
     },
     "allowed-tools": {
-      "type": ["string", "array"],
-      "description": "Tools the skill may use (comma-separated string or list)"
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      ],
+      "description": "Host tool allow-list; an explicit empty value remains restrictive"
     },
     "model": {
       "type": "string",
@@ -62,8 +73,40 @@
     "requires": {
       "type": "object",
       "description": "Runtime dependencies, e.g. { \"mcp\": [\"rube\"] }"
+    },
+    "compatibility": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Runtime or host compatibility requirements"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Portable scalar metadata",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    },
+    "argument-hint": {
+      "type": "string",
+      "description": "Arguments displayed for user-invocable skills"
+    },
+    "user-invocable": {
+      "type": "boolean",
+      "description": "Whether a user can invoke the skill explicitly"
+    },
+    "disable-model-invocation": {
+      "type": "boolean",
+      "description": "Prevent automatic model invocation"
     }
   },
-  "required": ["name", "description", "category"],
+  "required": [
+    "name",
+    "description",
+    "category"
+  ],
   "additionalProperties": false
 }

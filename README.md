@@ -1,5 +1,19 @@
-# Build with Claude
+# Build with CLI
 
+<!-- buildwithcli-portability:start -->
+## Multi-CLI compiler
+
+The existing Claude Code marketplace remains compatible, and this repository now has a provider-neutral compiler for **OpenCode, Hermes Agent, Codex CLI, GitHub Copilot CLI, Claude Code, and arbitrary future agent CLIs**.
+
+```bash
+npm run portable:doctor
+npm run validate:portable
+npm run test:portable
+npm run portable:compile
+```
+
+Outputs are deterministic, hooks are disabled by default, and target-specific warnings/degradations are written into each generated report. See [the portability guide](docs/PORTABILITY.md) and [security model](docs/PORTABILITY_SECURITY.md).
+<!-- buildwithcli-portability:end -->
 ## **Claude Skills, Agents, Commands, Hooks, Plugins, Marketplaces collections for and extend Claude Code**
 
 [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)

@@ -1,0 +1,10 @@
+{
+  "$schema": "./docs/buildwithcli-config.schema.json",
+  "profile": "curated",
+  "hooks": "disabled",
+  "include": [],
+  "exclude": [
+    ".buildwithcli/**",
+    ".buildwithcli-backup/**"
+  ]
+}

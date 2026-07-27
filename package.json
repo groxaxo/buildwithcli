@@ -1,11 +1,11 @@
 {
-  "name": "buildwithclaude",
+  "name": "buildwithcli",
   "version": "1.0.0",
   "private": true,
-  "description": "A comprehensive collection of specialized AI subagents for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), designed to enhance development workflows with domain-specific expertise.",
+  "description": "A provider-neutral catalog and deterministic compiler for OpenCode, Hermes Agent, Codex CLI, GitHub Copilot CLI, Claude Code, and other agent CLIs.",
   "main": "index.js",
   "scripts": {
-    "test": "npm run validate && npm run test:unit",
+    "test": "npm run validate && npm run test:unit && npm run test:portable",
     "test:unit": "node --test scripts/github-search-pagination.test.js && node --experimental-strip-types --test web-ui/lib/indexer/search-pagination.test.ts",
     "test:integration": "./tests/plugin-test-harness.sh",
     "validate": "node scripts/validate-all.js",
@@ -14,22 +14,36 @@
     "generate:registry": "node scripts/generate-registry.js",
     "fetch:plugins": "node scripts/fetch-plugins.js",
     "fetch:all": "npm run fetch:plugins && npm run generate:registry",
-    "start": "node web-ui/server.js"
+    "start": "node web-ui/server.js",
+    "portable": "node bin/buildwithcli.js",
+    "portable:doctor": "node bin/buildwithcli.js doctor",
+    "portable:scan": "node bin/buildwithcli.js scan --profile curated",
+    "portable:compile": "node bin/buildwithcli.js compile --target all --profile curated --out .buildwithcli/dist",
+    "validate:portable": "node scripts/validate-portability.js",
+    "test:portable": "node scripts/run-portability-tests.js"
   },
   "workspaces": [
     "web-ui"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/davepoon/buildwithclaude.git"
+    "url": "git+https://github.com/groxaxo/buildwithcli.git"
   },
-  "keywords": [],
+  "keywords": [
+    "agent-skills",
+    "opencode",
+    "hermes-agent",
+    "codex-cli",
+    "copilot-cli",
+    "claude-code",
+    "mcp"
+  ],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/davepoon/buildwithclaude/issues"
+    "url": "https://github.com/groxaxo/buildwithcli/issues"
   },
-  "homepage": "https://github.com/davepoon/buildwithclaude#readme",
+  "homepage": "https://github.com/groxaxo/buildwithcli#readme",
   "dependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
@@ -37,5 +51,11 @@
     "glob": "^11.0.3",
     "gray-matter": "^4.0.3"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "bin": {
+    "buildwithcli": "bin/buildwithcli.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
 }

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/groxaxo/buildwithcli/blob/main/docs/buildwithcli-config.schema.json",
+  "title": "BuildWithCLI compiler configuration",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "profile": { "enum": ["curated", "all"] },
+    "hooks": { "enum": ["disabled", "trusted"] },
+    "include": { "type": "array", "items": { "type": "string" } },
+    "exclude": { "type": "array", "items": { "type": "string" } },
+    "maxFileBytes": { "type": "integer", "minimum": 1 },
+    "maxSkillBytes": { "type": "integer", "minimum": 1 },
+    "maxSkillFiles": { "type": "integer", "minimum": 1 },
+    "maxFiles": { "type": "integer", "minimum": 1 },
+    "maxScanBytes": { "type": "integer", "minimum": 1 },
+    "maxDepth": { "type": "integer", "minimum": 1 }
+  }
+}
