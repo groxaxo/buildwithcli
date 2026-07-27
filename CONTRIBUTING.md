@@ -29,7 +29,7 @@ plugins/
 
 bin/buildwithcli.js             # executable entrypoint
 lib/buildwithcli.js             # compatibility and lifecycle core
-tests/buildwithcli.test.js      # filesystem-level compatibility/security tests
+tests/*.test.js                  # filesystem-level compatibility/security tests
 docs/                           # compatibility, profiles, and security model
 examples/targets/               # custom target profile examples
 ```

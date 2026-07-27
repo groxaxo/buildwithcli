@@ -18,7 +18,7 @@ Local gates:
 ```bash
 node --check lib/buildwithcli.js
 node --check bin/buildwithcli.js
-node --test tests/buildwithcli.test.js
+node --test tests/*.test.js
 node bin/buildwithcli.js targets
 ```
 
