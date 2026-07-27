@@ -24,17 +24,43 @@ test('frontmatter emitter produces valid nested YAML without relying on dependen
   });
 });
 
-test('catalog discovery prefers aggregate resources and reports conflicting duplicates', async (t) => {
+test('catalog discovery uses authoritative aggregate roots and ignores nested reference Markdown', async (t) => {
   const { catalog } = await createCatalog(t);
+  await write(catalog, 'plugins/all-skills/skills/review/reference/agents/not-a-resource.md', '# Reference only\n');
   const result = await discoverCatalog(catalog);
   assert.equal(result.resources.length, 3);
   const agent = result.resources.find((resource) => resource.kind === 'agent');
   assert.equal(agent.sourcePath, 'plugins/all-agents/agents/python-expert.md');
+  assert.equal(result.conflicts.length, 0);
+  assert.equal(result.resources.some((resource) => resource.name === 'not-a-resource'), false);
+});
+
+test('catalog discovery falls back to category roots and still reports conflicting duplicates', async (t) => {
+  const { catalog } = await createCatalog(t);
+  await fsp.rm(path.join(catalog, 'plugins/all-agents'), { recursive: true });
+  await write(catalog, 'plugins/agents-secondary/agents/python-expert.md', `---
+name: python-expert
+description: Another conflicting category copy.
+category: language-specialists
+---
+Another body.
+`);
+  const result = await discoverCatalog(catalog);
+  assert.equal(result.resources.find((resource) => resource.kind === 'agent').sourcePath,
+    'plugins/agents-language-specialists/agents/python-expert.md');
   assert.equal(result.conflicts.length, 1);
   await assert.rejects(() => discoverCatalog(catalog, { strict: true }), (error) => {
     assert.equal(error.code, 'CATALOG_CONFLICT');
     return true;
   });
+});
+
+test('catalog doctor inventory counts root MCP assets as unsupported automatic projections', async (t) => {
+  const { catalog } = await createCatalog(t);
+  await write(catalog, 'mcp-servers/registry.json', '{}\n');
+  await write(catalog, '.mcp.json', '{}\n');
+  const result = await discoverCatalog(catalog);
+  assert.equal(result.unsupported.mcp, 2);
 });
 
 test('selectors support kind prefixes, globs, exclusions, and kind filters', async (t) => {

@@ -88,7 +88,7 @@ category: miscellaneous
 ---
 Review $ARGUMENTS.
 `);
-    await write(catalog, 'plugins/agents-quality/agents/review.md', `---
+    await write(catalog, 'plugins/all-agents/agents/review.md', `---
 name: review
 description: Review specialist agent.
 category: quality-security
